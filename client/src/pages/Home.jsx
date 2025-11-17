@@ -1,50 +1,51 @@
-import React, { useState } from 'react';
-import Navbar from '../components/Navbar';
-import toast, {Toaster} from 'react-hot-toast'
-import { FaEye, FaEyeSlash, FaSave} from 'react-icons/fa';
+import React, { useState } from "react";
+import Navbar from "../components/Navbar";
+import toast, { Toaster } from "react-hot-toast";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import { addPassword, updatePassword } from '../feature/password/passwordSlice';
-import PasswordList from '../components/PasswordList';
-
+import { addPassword, updatePassword } from "../feature/password/passwordSlice";
+import PasswordList from "../components/PasswordList";
 
 const Home = () => {
   const [show, setShow] = useState(false);
-  const [url, setUrl] = useState('')
-  const [password, setPassword] = useState('')
-  const [username, setUsername] = useState('')
-  const [editId, setEditId] = useState(null)
+  const [url, setUrl] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [editId, setEditId] = useState(null);
 
- const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
+  const handleAdd = (e) => {
+    e.preventDefault();
 
-const handleAdd = (e) => {
-  e.preventDefault();
+    if (url.length < 3 || password.length < 3) {
+      return toast.error(
+        <span style={{ fontWeight: "700" }}>
+          Password and URL should be greater than 3
+        </span>
+      );
+    }
+    const payload = { id: editId || Date.now(), url, username, password };
 
-  if (!url || !password) {
-    return toast.error("Password and URL are required");
-  }
-  const payload = { id: editId || Date.now(), url, username, password };
-
-  if (editId) {
-    dispatch(updatePassword(payload));
-    toast.success("Password updated!");
-    setEditId(null);
-  } else {
-    dispatch(addPassword(payload));
-    toast.success("Password saved!");
-  }
- console.log("hello world")
-  setUrl('');
-  setUsername('');
-  setPassword('');
-};
-
-
-
+    if (editId) {
+      dispatch(updatePassword(payload));
+      toast.success(
+        <span style={{ fontWeight: "700" }}>Password Updated!</span>
+      );
+      setEditId(null);
+    } else {
+      dispatch(addPassword(payload));
+      toast.success(<span style={{ fontWeight: "700" }}>Password saved!</span>);
+    }
+    console.log("hello world");
+    setUrl("");
+    setUsername("");
+    setPassword("");
+  };
 
   return (
     <>
-    <Toaster position='top-center' reverseOrder={false} />
+      <Toaster position="top-center" reverseOrder={false} />
       <Navbar />
       <div className="flex flex-col items-center px-2">
         {/* Form */}
@@ -57,7 +58,7 @@ const handleAdd = (e) => {
             <input
               type="text"
               value={url}
-              onChange={(e)=> setUrl(e.target.value)}
+              onChange={(e) => setUrl(e.target.value)}
               placeholder="Enter URL..."
               className="w-full px-3 py-2 rounded-md bg-white/60 outline-none placeholder-gray-700"
             />
@@ -65,7 +66,7 @@ const handleAdd = (e) => {
             <input
               type="text"
               value={username}
-              onChange={(e)=> setUsername(e.target.value)}
+              onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter Username..."
               className="w-full px-3 py-2 rounded-md bg-white/60 outline-none placeholder-gray-700"
             />
@@ -73,9 +74,9 @@ const handleAdd = (e) => {
             <div className="relative">
               <input
                 id="password"
-                type={show ? 'text' : 'password'}
+                type={show ? "text" : "password"}
                 value={password}
-                onChange={(e)=> setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password..."
                 className="w-full px-3 py-2 rounded-md bg-white/60 outline-none placeholder-gray-700"
               />
@@ -89,15 +90,23 @@ const handleAdd = (e) => {
 
             <button
               type="submit"
-              className="flex items-center cursor-pointer justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-200 w-full md:w-1/2 mx-auto"
+              className="flex items-center text-xl cursor-pointer text-black justify-center gap-1  bg-green-500 hover:bg-green-600 font-semibold py-2 px-4 rounded-md transition-all duration-200 w-full md:w-1/2 mx-auto"
             >
-              <FaSave /> Save
+              <lord-icon
+                src="https://cdn.lordicon.com/efxgwrkc.json"
+                trigger="hover"
+              ></lord-icon>
+              Save
             </button>
           </form>
         </div>
 
-       <PasswordList setUrl={setUrl} setUsername={setUsername} setPassword={setPassword} setEditId={setEditId} />
-
+        <PasswordList
+          setUrl={setUrl}
+          setUsername={setUsername}
+          setPassword={setPassword}
+          setEditId={setEditId}
+        />
       </div>
     </>
   );
