@@ -1,12 +1,26 @@
 import mongoose from "mongoose";
 
-const passwordSchema = new mongoose.Schema({
-    userId: String,
-    password: String,
-    username: String,
-    url: String
-},{timestamps: true})
+const passwordSchema = new mongoose.Schema(
+  {
+    userId: { type: String, required: true },
+    url: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    username: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
-const Pass = mongoose.model('Pass', passwordSchema)
+const Password = mongoose.model("Password", passwordSchema);
 
-export default Pass
+export default Password;

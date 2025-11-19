@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { useState } from "react";
 import { dltPassword } from "../feature/password/passwordSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { FaCopy, FaTrash, FaEdit, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const PasswordList = ({ setUrl, setUsername, setPassword, setEditId }) => {
   const passwordList = useSelector((state) => state.passwords.passwords);
@@ -12,12 +12,15 @@ const PasswordList = ({ setUrl, setUsername, setPassword, setEditId }) => {
     navigator.clipboard.writeText(pwd);
     toast.success(<span style={{ fontWeight: "700" }}>Password Copied!</span>);
   };
+
+
+
   const handleEdit = (id) => {
     const item = passwordList.find((p) => p.id === id);
     setUrl(item.url);
     setUsername(item.username);
     setPassword(item.password);
-    setEditId(id);
+    setEditId(item.id);
   };
 
   const [visibleId, setVisibleId] = useState(null);
@@ -44,37 +47,37 @@ const PasswordList = ({ setUrl, setUsername, setPassword, setEditId }) => {
             <span className="truncate">Password</span>
           </div>
 
-          {passwordList.map((item) => (
+          {passwordList.map((i) => (
             <div
-              key={item.id}
+              key={i.id}
               className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center bg-white/20 p-3 rounded-md mb-2 shadow shadow-white"
             >
               <div className="min-w-0 truncate sm:truncate">
                 <a
-                  href={item.url}
+                  href={i.url}
                   target="_blank"
                   rel="noreferrer"
                   className="sr-only"
                 >
                   Open URL
                 </a>
-                <span className="truncate block">{item.url}</span>
+                <span className="truncate block">{i.url}</span>
               </div>
 
               <div className="min-w-0 truncate sm:truncate">
-                <span className="truncate block">{item.username}</span>
+                <span className="truncate block">{i.username}</span>
               </div>
 
               <div className="min-w-0 flex items-center gap-2 sm:gap-4">
                 <span className="font-mono overflow-hidden truncate whitespace-nowrap block">
-                  {visibleId === item.id
-                    ? item.password
-                    : "•".repeat(item.password.length)}
+                  {visibleId === i.id
+                    ? i.password
+                    : "•".repeat(i.password.length)}
                 </span>
 
                 <button
                   className="flex-shrink-0 text-blue-500 hover:text-blue-700 cursor-pointer"
-                  onClick={() => copyPassword(item.password)}
+                  onClick={() => copyPassword(i.password)}
                   aria-label="Copy password"
                 >
                   <lord-icon
@@ -87,13 +90,13 @@ const PasswordList = ({ setUrl, setUsername, setPassword, setEditId }) => {
                 <button
                   className="flex-shrink-0 text-blue-500 cursor-pointer hover:text-blue-700"
                   onClick={() =>
-                    setVisibleId(visibleId === item.id ? null : item.id)
+                    setVisibleId(visibleId === i.id ? null : i.id)
                   }
                   aria-label={
-                    visibleId === item.id ? "Hide password" : "Show password"
+                    visibleId === i.id ? "Hide password" : "Show password"
                   }
                 >
-                  {visibleId === item.id ? (
+                  {visibleId === i.id ? (
                     <FaEyeSlash size={16} />
                   ) : (
                     <FaEye size={16} />
@@ -103,7 +106,7 @@ const PasswordList = ({ setUrl, setUsername, setPassword, setEditId }) => {
 
               <div className="flex items-center gap-4 sm:gap-2 justify-end sm:justify-start flex-shrink-0">
                 <button
-                  onClick={() => handleEdit(item.id)}
+                  onClick={() => handleEdit(i.id)}
                   className="text-blue-500 cursor-pointer hover:text-blue-700 flex-shrink-0"
                   aria-label="Edit"
                 >
@@ -116,7 +119,7 @@ const PasswordList = ({ setUrl, setUsername, setPassword, setEditId }) => {
                 </button>
                 <button
                   className="text-red-500 hover:text-red-700 cursor-pointer flex-shrink-0"
-                  onClick={() => deletePassword(item.id)}
+                  onClick={() => deletePassword(i.id)}
                   aria-label="Delete"
                 >
                   <lord-icon

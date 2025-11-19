@@ -5,6 +5,9 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { addPassword, updatePassword } from "../feature/password/passwordSlice";
 import PasswordList from "../components/PasswordList";
+import { useAuth } from "@clerk/clerk-react";
+import { createApi } from "../api/axios.js";
+
 
 const Home = () => {
   const [show, setShow] = useState(false);
@@ -12,36 +15,59 @@ const Home = () => {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [editId, setEditId] = useState(null);
+  const { getToken, userId } = useAuth();
 
   const dispatch = useDispatch();
 
-  const handleAdd = (e) => {
-    e.preventDefault();
 
-    if (url.length < 3 || password.length < 3) {
-      return toast.error(
-        <span style={{ fontWeight: "700" }}>
-          Password and URL should be greater than 3
-        </span>
-      );
-    }
-    const payload = { id: editId || Date.now(), url, username, password };
+
+  const handleAdd = async (e) => {
+  e.preventDefault();
+
+  if (url.length < 3 || password.length < 3) {
+    return toast.error(
+      <span style={{ fontWeight: "700" }}>
+        Password and URL should be greater than 3
+      </span>
+    );
+  }
+
+  const payload = {
+    url,
+    username,
+    password
+  };
+
+  const token = await getToken();
+  const api = createApi(token, userId);
+
+  try {
+    let saved;
 
     if (editId) {
-      dispatch(updatePassword(payload));
-      toast.success(
-        <span style={{ fontWeight: "700" }}>Password Updated!</span>
-      );
+      // UPDATE REQUEST
+      saved = await api.put(`/${editId}`, payload);
+
+      dispatch(updatePassword(saved.data));   // Redux update
+      toast.success(<span style={{ fontWeight: "700" }}>Password Updated!</span>);
       setEditId(null);
     } else {
-      dispatch(addPassword(payload));
+      // CREATE REQUEST
+      saved = await api.post("/passwords", payload);
+
+      dispatch(addPassword(saved.data));       // Redux add
       toast.success(<span style={{ fontWeight: "700" }}>Password saved!</span>);
     }
-    console.log("hello world");
-    setUrl("");
-    setUsername("");
-    setPassword("");
-  };
+
+  } catch (err) {
+    console.error(err);
+    toast.error("Backend error. Check your API logs.");
+  }
+
+  setUrl("");
+  setUsername("");
+  setPassword("");
+};
 
   return (
     <>
